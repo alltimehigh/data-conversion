@@ -11,5 +11,5 @@ pip install opencv-python numpy
 ## Command
 
 ```
-python labelme2mask.py --input_dir="./datasets/labelme/dataset_name/" --output_dir="./outputs/masks/dataset_name/"
+python labelme2mask.py --input_dir="./datasets/labelme/dataset_name/" --output_dir="./outputs/dataset_name/masks/"
 ```

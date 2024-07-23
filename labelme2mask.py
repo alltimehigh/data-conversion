@@ -2,6 +2,8 @@ import os, sys
 import json
 import numpy as np
 import cv2
+from PIL import Image
+
 import argparse
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -13,7 +15,7 @@ args = parser.parse_args()
 # input_folder =  "./datasets/labelme/dataset_name/"
 input_folder =  args.input_dir
 # args.output_dir
-# output_folder = "./outputs/masks/dataset_name/"
+# output_folder = "./outputs/dataset_name/"
 output_folder = args.output_dir
 
 if not os.path.exists(input_folder):
@@ -24,9 +26,10 @@ if not os.path.exists(input_folder):
 
 print("All Files" , os.listdir(input_folder))
 
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
-
+if not os.path.exists(output_folder + "masks/"):
+    os.makedirs(output_folder + "masks/")
+if not os.path.exists(output_folder + "images/"):
+    os.makedirs(output_folder + "images/")
 files = []
 jsons = []
 keys = []
@@ -77,7 +80,13 @@ for filename in files:
 for tem in range(len(keys)):
     cv2.fillPoly(masks_save[tem], [points_save[tem]], (255, 255, 255))
     # save the mask 
-    output_path = os.path.join(output_folder, keys[tem]+".png")
+    output_path = os.path.join(output_folder + "masks/", keys[tem]+".png")
     print("INFO. Output Path :", output_path)
     cv2.imwrite(output_path, masks_save[tem])
+
+for filename in files:
+    image_path = os.path.join(input_folder, filename)
+    open_image = Image.open(image_path)
+    output_path = os.path.join(output_folder + "images/", filename.replace('.bmp', '.png'))
+    open_image.save(output_path, "PNG")
 
