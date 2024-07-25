@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 # read json file
-with open("./data/region.json", "r") as f:
+with open("./test/cow.json", "r") as f:
     data = f.read()
 # convert str to json objs
 data = json.loads(data)
@@ -14,7 +14,7 @@ points = data["shapes"][0]["points"]
 points = np.array(points, dtype=np.int32)   # tips: points location must be int32
 print(points )
 # read image to get shape
-image = cv2.imread("./data/region.jpg")
+image = cv2.imread("./test/cow.jpg")
 
 # create a blank image
 mask = np.zeros_like(image, dtype=np.uint8)
