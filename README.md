@@ -10,6 +10,36 @@ Data conversion for deep learning image segmentation models.
 python labelme2mask.py --input_dir="./datasets/labelme/dataset_name/" --output_dir="./outputs/dataset_name/"
 ```
 
+# YOLO2Labelme
+
+Tool to convert yolo format dataset to labelme json format.
+
+## Usage
+Arguments:
+
+`data` : path to dataset directory
+
+Keyword arguments:
+
+`out` : path to output directory. Default dataset is created at same path as data_dir with name labelmeDataset.
+
+`skip` : action to take if `.txt` file corresponding to image is not found.
+- `False` (default) raises `FileNotFoundError`.
+- `print` prints missing file path to stdout.
+- `True` or any other value skips file silently.
+### CLI Usage:
+
+Following command creates labelme json dataset directory at `path/to/yolo/labelmeDataset` from `path/to/yolo/dataset` dataset directory.
+```bash
+yolo2labelme path/to/yolo/dataset
+```
+
+Specify output directory, skip.
+
+```bash
+yolo2labelme path/to/yoloDataset --out path/to/labelmeJsonDir --skip print
+```
+
 # Labelme2YOLO
 
 Help converting LabelMe Annotation Tool JSON format to YOLO text file format. 
