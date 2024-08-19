@@ -99,7 +99,7 @@ if files_check == txtfs_check :
 
         # Read original image
         image = cv2.imread(input_folder + "images/" + tnfiles)
-        h, w = image.shape[:2]
+        w, h = image.shape[:2]
         # Read YOLO annotation file
         with open(input_folder + "labels/" + tntxts, 'r') as file:
             lines = file.readlines()
@@ -147,7 +147,7 @@ if files_check == txtfs_check :
 
         # Read original image
         image = cv2.imread(input_folder + "images/" + tnfiles)
-        h, w = image.shape[:2]
+        w, h = image.shape[:2]
         # Read YOLO annotation file
         with open(input_folder + "labels/" + tntxts, 'r') as file:
             lines = file.readlines()
@@ -216,7 +216,7 @@ else :
 
         # Read original image
         image = cv2.imread(input_folder + "images/clear/" + tnfiles)
-        h, w = image.shape[:2]
+        w, h = image.shape[:2]
         # Read YOLO annotation file
         with open(input_folder + "labels/" + tntxts, 'r') as file:
             lines = file.readlines()
@@ -264,7 +264,7 @@ else :
 
         # Read original image
         image = cv2.imread(input_folder + "images/clear/" + tnfiles)
-        h, w = image.shape[:2]
+        w, h = image.shape[:2]
         # Read YOLO annotation file
         with open(input_folder + "labels/" + tntxts, 'r') as file:
             lines = file.readlines()
