@@ -13,7 +13,7 @@ args = parser.parse_args()
 
 
 
-ppath = '/mnt/e/mw/yolov8-datasets/mw_240819_1/dataset.yaml'
+# ppath = '/mnt/.../dataset.yaml'
 ppath = args.ppath
 ymal_path = ppath
 up_ymal_path = os.path.dirname(ymal_path)
