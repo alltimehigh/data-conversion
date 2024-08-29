@@ -3,11 +3,11 @@ import numpy as np
 import argparse
 
 # Args
-# EX: python3 yolo2images-fill.py --txt="./test/coco128.txt"  --img="./test/coco128.jpg"
+# EX: python3 yolo2images.py --txt="./test/coco128.txt"  --img="./test/coco128.jpg"
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--txt')
 parser.add_argument('--img')
-parser.add_argument('--output', default='savedImage.jpg')
+parser.add_argument('--output', default='savedImageFill.jpg')
 args = parser.parse_args()
 
 ptxt = args.txt
@@ -36,7 +36,7 @@ def read_txt_labels(txt_file):
 
 def draw_labels(image, labels):
     """
-    Draw segmentation region outlines on the image
+    Draw segmentation regions on the image
     :param image: image
     :param labels: list of labels
     """
@@ -44,9 +44,8 @@ def draw_labels(image, labels):
         class_id, coordinates = label
         # Convert coordinates to integers and reshape into polygons
         points = [(int(x * image.shape[1]), int(y * image.shape[0])) for x, y in zip(coordinates[::2], coordinates[1::2])]
-        # Draw outlines using polygons
-        cv2.polylines(image, [np.array(points)], True, (0, 255, 0), 2) # Red indicates the segmentation area outline
-
+        # Use polygon fill
+        cv2.fillPoly(image, [np.array(points)], (0, 255, 0)) # Green indicates segmented area
 
 def main():
     """
@@ -55,6 +54,7 @@ def main():
     # Reading an Image
     # image = cv2.imread("./test/coco128.jpg")
     image = cv2.imread(pimg)
+    height, width, _  = image.shape
     # Read txt annotation file
     # txt_file = "./test/coco128.txt"
     txt_file = ptxt
@@ -62,7 +62,7 @@ def main():
     # Draw segmentation area
     draw_labels(image, labels)
     # Get the window size
-    window_size = (1600, 800) # You can resize the window as needed
+    window_size = (width//2, height//2) # You can resize the window as needed
     # Resize an image
     image = cv2.resize(image, window_size)
     # Create a black image the same size as the window
