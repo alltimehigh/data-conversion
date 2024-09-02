@@ -60,8 +60,10 @@ else :
 test_key = sample(keys, int(len(keys)*0.2))
 train_key = list(set(keys) ^ set(test_key))
 
-points_save = []
-masks_save = []
+points_save_test = []
+masks_save_test = []
+points_save_train = []
+masks_save_train = []
 
 # train
 for filename in train_key:
@@ -74,7 +76,7 @@ for filename in train_key:
     # get the points 
     points = data["shapes"][0]["points"]
     points = np.array(points, dtype=np.int32)   # tips: points location must be int32
-    points_save.append(points)
+    points_save_train.append(points)
 
     image_path = os.path.join(input_folder, (filename + "." + savesubimgname))
     print("INFO. TRAIN Image Path :", image_path)
@@ -82,7 +84,7 @@ for filename in train_key:
     image = cv2.imread(image_path)
     # create a blank image
     mask = np.zeros_like(image, dtype=np.uint8)
-    masks_save.append(mask)
+    masks_save_train.append(mask)
 # test
 for filename in test_key:
     json_path = os.path.join(input_folder, (filename + ".json"))
@@ -94,7 +96,7 @@ for filename in test_key:
     # get the points 
     points = data["shapes"][0]["points"]
     points = np.array(points, dtype=np.int32)   # tips: points location must be int32
-    points_save.append(points)
+    points_save_test.append(points)
 
     image_path = os.path.join(input_folder, (filename + "." + savesubimgname))
     print("INFO. TEST Image Path :", image_path)
@@ -102,25 +104,25 @@ for filename in test_key:
     image = cv2.imread(image_path)
     # create a blank image
     mask = np.zeros_like(image, dtype=np.uint8)
-    masks_save.append(mask)
+    masks_save_test.append(mask)
 
 for tem in range(len(train_key)):
-    cv2.fillPoly(masks_save[tem], [points_save[tem]], (255, 255, 255))
+    cv2.fillPoly(masks_save_train[tem], [points_save_train[tem]], (255, 255, 255))
     # save the mask 
     output_path = os.path.join(output_folder + "train/masks/", train_key[tem]+".png")
     print("INFO. Output Path :", output_path)
-    cv2.imwrite(output_path, masks_save[tem])
+    cv2.imwrite(output_path, masks_save_train[tem])
     image_path = os.path.join(input_folder, (filename + "." + savesubimgname))
     open_image = Image.open(image_path)
     output_path = os.path.join(output_folder + "train/images/", train_key[tem]+".png")
     open_image.save(output_path, "PNG")
 
 for tem in range(len(test_key)):
-    cv2.fillPoly(masks_save[tem], [points_save[tem]], (255, 255, 255))
+    cv2.fillPoly(masks_save_test[tem], [points_save_test[tem]], (255, 255, 255))
     # save the mask 
     output_path = os.path.join(output_folder + "test/masks/", test_key[tem]+".png")
     print("INFO. Output Path :", output_path)
-    cv2.imwrite(output_path, masks_save[tem])
+    cv2.imwrite(output_path, masks_save_test[tem])
     image_path = os.path.join(input_folder, (filename + "." + savesubimgname))
     open_image = Image.open(image_path)
     output_path = os.path.join(output_folder + "test/images/", test_key[tem]+".png")
