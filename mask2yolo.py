@@ -1,9 +1,11 @@
+
+
+
 import copy
 import cv2
 import os
 import shutil
 import numpy as np
-
 
 def eachmask2yolo(path, save_path, procshow=False):
     files = os.listdir(path)
@@ -19,7 +21,7 @@ def eachmask2yolo(path, save_path, procshow=False):
         cnt,hit = cv2.findContours(bin_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_TC89_KCOS)
 
         cnt = list(cnt)
-        f = open(save_path+"{}.txt".format(file.split(".")[0]), "a+")
+        f = open(save_path+"/{}.txt".format(file.split(".")[0]), "a+")
         for j in cnt:
             result = []
             pre = j[0]
@@ -57,7 +59,38 @@ def eachmask2yolo(path, save_path, procshow=False):
             
             cv2.destroyAllWindows()  # 关闭窗口
 
-path = "./test/masks"
-save_path = "./outputs/"
-# eachmask2yolo(path, save_path, procshow=True)
-eachmask2yolo(path, save_path, procshow=False)
+def convert_unet_to_yolo(input_dir, output_dir):
+    os.makedirs(os.path.join(output_dir, "images/train"), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "images/val"), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "labels/train"), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "labels/val"), exist_ok=True)
+
+    for split in ["train", "val"]:
+        image_src_dir = os.path.join(input_dir, split, "images")
+        mask_src_dir = os.path.join(input_dir, split, "masks")
+        image_dst_dir = os.path.join(output_dir, "images", split)
+        label_dst_dir = os.path.join(output_dir, "labels", split)
+        
+        # Copy images to YOLO structure
+        for img_file in os.listdir(image_src_dir):
+            shutil.copy(os.path.join(image_src_dir, img_file), image_dst_dir)
+        
+        # Convert masks to YOLO labels
+        eachmask2yolo(mask_src_dir, label_dst_dir)
+    
+    # Create dataset.yaml
+    dataset_yaml_content = f"""
+    train: {os.path.join(output_dir, 'images/train')}
+    val: {os.path.join(output_dir, 'images/val')}
+
+    nc: 1
+    names: ['object']
+    """
+    with open(os.path.join(output_dir, "dataset.yaml"), "w") as yaml_file:
+        yaml_file.write(dataset_yaml_content)
+
+# Example usage
+input_directory = "./datasets/mask/isic2018"
+# /unet_dataset
+output_directory = "./outputs/yolo_dataset"
+convert_unet_to_yolo(input_directory, output_directory)
