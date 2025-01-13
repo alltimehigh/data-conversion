@@ -31,7 +31,7 @@ for file in files:
                 temp[1] /= H
                 result.append(temp)
 
-                # cv2.circle(img1,i[0],1,(0,0,255),2)
+                # cv2.circle(img,i[0],1,(0,0,255),2)
 
         print(result)
         print(len(result))
@@ -47,11 +47,11 @@ for file in files:
             f.write("\n")
     f.close()
 
-    #cv2.imshow("test",img1)
+    # cv2.imshow("test",img)
     # while True:
     #     key = cv2.waitKey(1)  # 等待 1 毫秒，返回键盘按键的 ASCII 值
     #     if key == ord('q'):  # 如果按下 'q' 键，退出循环
     #         break
-    #
+    
     # cv2.destroyAllWindows()  # 关闭窗口
 
