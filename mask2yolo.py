@@ -79,9 +79,16 @@ def convert_unet_to_yolo(input_dir, output_dir):
         eachmask2yolo(mask_src_dir, label_dst_dir)
     
     # Create dataset.yaml
+    # dataset_yaml_content = f"""
+    # train: {os.path.join(output_dir, 'images/train')}
+    # val: {os.path.join(output_dir, 'images/val')}
+
+    # nc: 1
+    # names: ['object']
+    # """
     dataset_yaml_content = f"""
-    train: {os.path.join(output_dir, 'images/train')}
-    val: {os.path.join(output_dir, 'images/val')}
+    train: ./images/train
+    val: ./images/val
 
     nc: 1
     names: ['object']
