@@ -4,7 +4,7 @@ import json, yaml, os, argparse
 import shutil
 
 # Reference : https://github.com/kadapallaNithin/yolo2labelme/blob/main/yolo2labelme.py
-# EX : python yolo2labelme.py --input_dir="./datasets/yolo/yolo2labelme/" --out="./outputs/labelme/yolo2labelme/"
+# EX : python yolo2labelme2.py --input_dir="./outputs/yolo_dataset/" --out="./outputs/labelme/"
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--input_dir', help='input annotated directory')
