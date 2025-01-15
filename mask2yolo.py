@@ -1,62 +1,117 @@
-
-
-
 import copy
 import cv2
 import os
 import shutil
 import numpy as np
 
+import argparse
+# Args
+# EX: python3 mask2yolo.py --input="./datasets/mask/dataset_name" --output="./outputs/yolo_dataset"
+# EX: python3 mask2yolo.py --input="./datasets/mask/isic2018/" --output="./outputs/yolo_dataset"
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--input')
+parser.add_argument('--output')
+args = parser.parse_args()
+
+# def eachmask2yolo(path, save_path, procshow=False):
+#     files = os.listdir(path)
+#     for file in files:
+#         name = file.split('.')[0]
+#         file_path = os.path.join(path,name+'.png')
+#         img = cv2.imread(file_path)
+#         H,W=img.shape[0:2]
+#         print(H,W)
+
+#         gray_img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+#         ret,bin_img = cv2.threshold(gray_img,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+#         cnt,hit = cv2.findContours(bin_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_TC89_KCOS)
+
+#         cnt = list(cnt)
+#         f = open(save_path+"/{}.txt".format(file.split(".")[0]), "a+")
+#         for j in cnt:
+#             result = []
+#             pre = j[0]
+#             for i in j:
+#                 if abs(i[0][0] - pre[0][0]) > 1 or abs(i[0][1] - pre[0][1]) > 1: # 在这里可以调整间隔点，我设置为 1
+#                     pre = i
+#                     temp = list(i[0])
+#                     temp[0] /= W
+#                     temp[1] /= H
+#                     result.append(temp)
+
+#                     if procshow:
+#                         cv2.circle(img,i[0],1,(0,0,255),2)
+
+#             print(result)
+#             print(len(result))
+
+#             # if len(result) != 0:
+
+#             if len(result) != 0:
+#                 f.write("0 ")
+#                 for line in result:
+#                     line = str(line)[1:-2].replace(",","")
+#                     # print(line)
+#                     f.write(line+" ")
+#                 f.write("\n")
+#         f.close()
+
+#         if procshow:
+#             cv2.imshow("test",img)
+#             while True:
+#                 key = cv2.waitKey(1)  # 等待 1 毫秒，返回键盘按键的 ASCII 值
+#                 if key == ord('q'):  # 如果按下 'q' 键，退出循环
+#                     break
+            
+#             cv2.destroyAllWindows()  # 关闭窗口
+
 def eachmask2yolo(path, save_path, procshow=False):
     files = os.listdir(path)
     for file in files:
         name = file.split('.')[0]
-        file_path = os.path.join(path,name+'.png')
+        file_path = os.path.join(path, name + '.png')
         img = cv2.imread(file_path)
-        H,W=img.shape[0:2]
-        print(H,W)
+        H, W = img.shape[0:2]
+        print(H, W)
 
-        gray_img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-        ret,bin_img = cv2.threshold(gray_img,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        cnt,hit = cv2.findContours(bin_img,cv2.RETR_TREE,cv2.CHAIN_APPROX_TC89_KCOS)
+        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret, bin_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        cnt, hit = cv2.findContours(bin_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_TC89_KCOS)
 
         cnt = list(cnt)
-        f = open(save_path+"/{}.txt".format(file.split(".")[0]), "a+")
+        f = open(save_path + "/{}.txt".format(file.split(".")[0]), "a+")
         for j in cnt:
             result = []
             pre = j[0]
             for i in j:
-                if abs(i[0][0] - pre[0][0]) > 1 or abs(i[0][1] - pre[0][1]) > 1: # 在这里可以调整间隔点，我设置为 1
+                if abs(i[0][0] - pre[0][0]) > 1 or abs(i[0][1] - pre[0][1]) > 1:  # 在这里可以调整间隔点，我设置为 1
                     pre = i
                     temp = list(i[0])
-                    temp[0] /= W
-                    temp[1] /= H
+                    temp[0] = float(temp[0]) / W
+                    temp[1] = float(temp[1]) / H
                     result.append(temp)
 
                     if procshow:
-                        cv2.circle(img,i[0],1,(0,0,255),2)
+                        cv2.circle(img, i[0], 1, (0, 0, 255), 2)
 
             print(result)
             print(len(result))
 
-            # if len(result) != 0:
-
             if len(result) != 0:
                 f.write("0 ")
                 for line in result:
-                    line = str(line)[1:-2].replace(",","")
-                    # print(line)
-                    f.write(line+" ")
+                    line = " ".join(map(str, line))
+                    f.write(line + " ")
                 f.write("\n")
         f.close()
 
         if procshow:
-            cv2.imshow("test",img)
+            cv2.imshow("test", img)
             while True:
                 key = cv2.waitKey(1)  # 等待 1 毫秒，返回键盘按键的 ASCII 值
                 if key == ord('q'):  # 如果按下 'q' 键，退出循环
                     break
-            
+
             cv2.destroyAllWindows()  # 关闭窗口
 
 def convert_unet_to_yolo(input_dir, output_dir):
@@ -96,8 +151,11 @@ def convert_unet_to_yolo(input_dir, output_dir):
     with open(os.path.join(output_dir, "dataset.yaml"), "w") as yaml_file:
         yaml_file.write(dataset_yaml_content)
 
+input_directory = args.input
+output_directory = args.output
+
 # Example usage
-input_directory = "./datasets/mask/isic2018"
+# input_directory = "./datasets/mask/isic2018"
 # /unet_dataset
-output_directory = "./outputs/yolo_dataset"
+# output_directory = "./outputs/yolo_dataset"
 convert_unet_to_yolo(input_directory, output_directory)
