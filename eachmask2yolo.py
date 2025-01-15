@@ -27,8 +27,8 @@ def eachmask2yolo(path, save_path, procshow=False):
                 if abs(i[0][0] - pre[0][0]) > 1 or abs(i[0][1] - pre[0][1]) > 1: # 在这里可以调整间隔点，我设置为 1
                     pre = i
                     temp = list(i[0])
-                    temp[0] /= W
-                    temp[1] /= H
+                    temp[0] = float(temp[0]) / W
+                    temp[1] = float(temp[1]) / H
                     result.append(temp)
 
                     if procshow:
