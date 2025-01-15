@@ -1,5 +1,5 @@
 opencv-python
 Pillow
 scikit-learn
-labelme
+labelme==5.2.1
 numpy

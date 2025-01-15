@@ -15,14 +15,20 @@ from labelme import utils
 
 class Labelme2YOLO(object):
     
-    def __init__(self, json_dir, to_seg=False):
+    def __init__(self, json_dir, to_seg=False, other_path=None):
         self._json_dir = json_dir
 
         self._label_id_map = self._get_label_id_map(self._json_dir)
         self._to_seg = to_seg
 
-        i = 'YOLODataset'
-        i += '_seg/' if to_seg else '/'
+        if other_path is None:
+            i = 'YOLODataset'
+            i += '_seg/' if to_seg else '/'
+        else:
+            i = other_path + 'YOLODataset'
+            i += '_seg/' if to_seg else '/'
+        # i = 'YOLODataset'
+        # i += '_seg/' if to_seg else '/'
         self._save_path_pfx = os.path.join(self._json_dir, i)
 
     def _make_train_val_dir(self):
@@ -253,9 +259,9 @@ class Labelme2YOLO(object):
             names_str = names_str.rstrip(', ')
             yaml_file.write('names: [%s]' % names_str)
 
-def lme2yolov8(json_dir, seg, val_size, json_name):
+def lme2yolov8(json_dir, seg, val_size, json_name, other_path=None):
 
-    convertor = Labelme2YOLO(json_dir, to_seg=seg)
+    convertor = Labelme2YOLO(json_dir, to_seg=seg, other_path=other_path)
     if json_name is None:
         convertor.convert(val_size=val_size)
     else:

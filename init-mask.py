@@ -1,3 +1,4 @@
+from function.fmask2yolo import *
 import os
 
 def create_default_data_dirs(base_path="./outputs/default_data"):
@@ -21,3 +22,4 @@ def copy_mask_dataset(src="./datasets/mask/mask_dataset", dest="./outputs/defaul
 if __name__ == "__main__":
     create_default_data_dirs()
     copy_mask_dataset()
+    convert_unet_to_yolo("./datasets/mask/mask_dataset", "./outputs/default_data/dataset_yolo")

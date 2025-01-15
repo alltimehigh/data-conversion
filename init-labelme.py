@@ -24,3 +24,5 @@ def copy_labelme_dataset(src="./datasets/labelme/labelme_dataset", dest="./outpu
 if __name__ == "__main__":
     create_default_data_dirs()
     copy_labelme_dataset()
+    lme2yolov8("./datasets/labelme/labelme_dataset/", seg=True, val_size=0.2, json_name=None, other_path="../../../outputs/default_data/dataset_yolo/")
+    lme2mask2("./datasets/labelme/labelme_dataset", "./outputs/default_data/dataset_masks/")
