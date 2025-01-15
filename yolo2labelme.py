@@ -69,7 +69,7 @@ def yolo2labelme_single(txt_path, img_path, class_labels, out_dir):
     img = Image.open(img_path)
     result = {"version": "5.2.1", "flags": {}}
     result['shapes'] = get_shapes(txt_path, img.width, img.height, class_labels)
-    result["imagePath"] = img_path
+    result["imagePath"] = os.path.basename(img_path)
     result["imageData"] = tobase64(img_path)
     result["imageHeight"] = img.height
     result["imageWidth"] = img.width
