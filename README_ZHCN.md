@@ -31,6 +31,10 @@
 pip install -r requirements.txt
 ```
 
+```bash
+pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple 
+```
+
 ---
 
 ## 功能描述
