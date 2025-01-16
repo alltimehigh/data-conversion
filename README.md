@@ -1,5 +1,8 @@
 # Data Conversion Technical Documentation
 
+[繁中正體 - Traditional Chinese](https://github.com/kancheng/data-conversion/README.md).
+[简体中文 - Simplified Chinese](https://github.com/kancheng/data-conversion/README.md).
+
 ## Overview
 The **Data Conversion Project** provides a set of tools and scripts to facilitate the transformation of data formats commonly used in deep learning applications, particularly for image segmentation and object detection tasks. This project is designed to handle conversions between formats such as Labelme, YOLO, and mask images.
 
