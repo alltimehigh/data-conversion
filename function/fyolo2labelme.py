@@ -3,9 +3,6 @@ from PIL import Image
 import json, yaml, os
 import shutil
 
-# Reference : https://github.com/kadapallaNithin/yolo2labelme/blob/main/yolo2labelme.py
-# EX : python yolo2labelme.py --input_dir="./datasets/yolo/yolo2labelme/" --out="./outputs/labelme/yolo2labelme/"
-
 image_extensions = ('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')
 
 def get_shapes(txt_path, width, height, class_labels):
@@ -95,6 +92,3 @@ def yolo2labelme(data, out=None, skip=False):
                                                 +"skip='print' to print missed paths.")
                     elif skip == 'print':
                         print(f'Missing {txt_file}')
-
-
-# yolo2labelme(data, out, skip)
