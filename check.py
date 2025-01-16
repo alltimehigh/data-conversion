@@ -1,5 +1,34 @@
 import os
 
+# └─datasets
+#    │  
+#    ├─labelme
+#    │  └─labelme_dataset
+#    ├─mask
+#    │  ├─mask_dataset1
+#    │  │  ├─train
+#    │  │  │  ├─images
+#    │  │  │  └─masks
+#    │  │  └─val
+#    │  │      ├─images
+#    │  │      └─masks
+#    │  └─mask_dataset2
+#    │      ├─images
+#    │      │  ├─train
+#    │      │  └─val
+#    │      └─masks
+#    │          ├─train
+#    │          └─val
+#    └─yolo
+#        └─yolo_dataset
+#            ├─images
+#            │  ├─train
+#            │  └─val
+#            └─labels
+#                ├─train
+#                └─val
+
+
 def is_labelme_format(root_dir):
     """判斷是否是 LabelMe 格式"""
     for subdir in os.listdir(root_dir):
