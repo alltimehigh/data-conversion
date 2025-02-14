@@ -5,7 +5,6 @@ import cv2
 from PIL import Image
 
 def lme2mask(input_folder, output_folder):
-
     if not os.path.exists(input_folder):
         print("No data source.")
         print("沒有數據來源。")
@@ -24,10 +23,10 @@ def lme2mask(input_folder, output_folder):
 
     for filename in os.listdir(input_folder):
         if filename.endswith((".json")):
-            jsons.append(filename) 
+            jsons.append(filename)
     for filename in os.listdir(input_folder):
-        if filename.endswith((".png", ".jpg", ".jpeg", ".bmp")):
-            files.append(filename) 
+        if filename.endswith((".png", ".jpg", ".jpeg", ".bmp",".JPG")):
+            files.append(filename)
 
     if len(files) == len(jsons) :
         print("The number of JSON files is the same as the number of image files.")
@@ -43,18 +42,8 @@ def lme2mask(input_folder, output_folder):
 
     points_save = []
     masks_save = []
+    points1=[]
 
-    for filename in jsons:
-        json_path = os.path.join(input_folder, filename)
-        print("INFO. JSON Path :", json_path)
-        with open(json_path, "r") as f:
-            data = f.read()   
-        # convert str to json objs
-        data = json.loads(data)
-        # get the points 
-        points = data["shapes"][0]["points"]
-        points = np.array(points, dtype=np.int32)   # tips: points location must be int32
-        points_save.append(points)
 
     for filename in files:
         image_path = os.path.join(input_folder, filename)
@@ -63,18 +52,36 @@ def lme2mask(input_folder, output_folder):
         # create a blank image
         mask = np.zeros_like(image, dtype=np.uint8)
         masks_save.append(mask)
+        
+    j=0
+    for filename in jsons:
+        points_save = []
+        json_path = os.path.join(input_folder, filename)
+        print("INFO. JSON Path :", json_path)
+        with open(json_path, "r") as f:
+            data = f.read()
+        # convert str to json objs
+        data = json.loads(data)
+        # get the points
 
+        for i in range(len(data["shapes"])):
+            points = data["shapes"][i]["points"]
+            points = np.array(points, dtype=np.int32)   # tips: points location must be int32
+            points_save.append(points)
 
-    for tem in range(len(keys)):
-        cv2.fillPoly(masks_save[tem], [points_save[tem]], (255, 255, 255))
-        # save the mask 
-        output_path = os.path.join(output_folder + "masks/", keys[tem]+".png")
-        print("INFO. Output Path :", output_path)
-        cv2.imwrite(output_path, masks_save[tem])
+        for i in range(len(data["shapes"])):
+            cv2.fillPoly(masks_save[j], [points_save[i]], (255, 255, 255))
+            #save mask
+            output_path = os.path.join(output_folder + "masks/", keys[j] + ".png")
+            print("INFO. Output Path :", output_path)
+            cv2.imwrite(output_path, masks_save[j])
+        j=j+1
+        points_save=[]
 
     for filename in files:
         image_path = os.path.join(input_folder, filename)
         open_image = Image.open(image_path)
         output_path = os.path.join(output_folder + "images/", filename.replace('.bmp', '.png'))
         open_image.save(output_path, "PNG")
+
 
