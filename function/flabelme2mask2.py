@@ -27,10 +27,10 @@ def lme2mask2(input_folder, output_folder):
     savesubimgname = ""
     for filename in os.listdir(input_folder):
         if filename.endswith((".json")):
-            jsons.append(filename) 
+            jsons.append(filename)
     for filename in os.listdir(input_folder):
-        if filename.endswith((".png", ".jpg", ".jpeg", ".bmp")):
-            files.append(filename) 
+        if filename.endswith((".png", ".jpg", ".jpeg", ".bmp",".JPG")):
+            files.append(filename)
             savesubimgname = filename.split(".")[1]
 
     if len(files) == len(jsons) :
@@ -55,18 +55,8 @@ def lme2mask2(input_folder, output_folder):
     masks_save_train = []
 
     # train
+    j=0
     for filename in train_key:
-        json_path = os.path.join(input_folder, (filename + ".json"))
-        print("INFO. TRAIN JSON Path :", json_path)
-        with open(json_path, "r") as f:
-            data = f.read()   
-        # convert str to json objs
-        data = json.loads(data)
-        # get the points 
-        points = data["shapes"][0]["points"]
-        points = np.array(points, dtype=np.int32)   # tips: points location must be int32
-        points_save_train.append(points)
-
         image_path = os.path.join(input_folder, (filename + "." + savesubimgname))
         print("INFO. TRAIN Image Path :", image_path)
         # read image to get shape
@@ -74,19 +64,34 @@ def lme2mask2(input_folder, output_folder):
         # create a blank image
         mask = np.zeros_like(image, dtype=np.uint8)
         masks_save_train.append(mask)
-    # test
-    for filename in test_key:
+
+        points_save_train=[]
         json_path = os.path.join(input_folder, (filename + ".json"))
-        print("INFO. TEST JSON Path :", json_path)
+        print("INFO. TRAIN JSON Path :", json_path)
         with open(json_path, "r") as f:
-            data = f.read()   
+            data = f.read()
         # convert str to json objs
         data = json.loads(data)
-        # get the points 
-        points = data["shapes"][0]["points"]
-        points = np.array(points, dtype=np.int32)   # tips: points location must be int32
-        points_save_test.append(points)
+        # get the points
+        for i in range(len(data["shapes"])):
+            points = data["shapes"][i]["points"]
+            points = np.array(points, dtype=np.int32)   # tips: points location must be int32
+            points_save_train.append(points)
+        for tem in range(len(data["shapes"])):
+            cv2.fillPoly(masks_save_train[j], [points_save_train[tem]], (255, 255, 255))
+            # save the mask
+            output_path = os.path.join(output_folder + "train/masks/", train_key[j] + ".png")
+            print("INFO. Output Path :", output_path)
+            cv2.imwrite(output_path, masks_save_train[j])
+            image_path = os.path.join(input_folder, (train_key[j] + "." + savesubimgname))
+            open_image = Image.open(image_path)
+            output_path = os.path.join(output_folder + "train/images/", train_key[j] + ".png")
+            open_image.save(output_path, "PNG")
+        j=j+1
 
+    # test
+    j=0
+    for filename in test_key:
         image_path = os.path.join(input_folder, (filename + "." + savesubimgname))
         print("INFO. TEST Image Path :", image_path)
         # read image to get shape
@@ -94,26 +99,27 @@ def lme2mask2(input_folder, output_folder):
         # create a blank image
         mask = np.zeros_like(image, dtype=np.uint8)
         masks_save_test.append(mask)
+        points_save_test=[]
+        json_path = os.path.join(input_folder, (filename + ".json"))
+        print("INFO. TEST JSON Path :", json_path)
+        with open(json_path, "r") as f:
+            data = f.read()
+        # convert str to json objs
+        data = json.loads(data)
+        # get the points
+        for i in range(len(data["shapes"])):
+            points = data["shapes"][i]["points"]
+            points = np.array(points, dtype=np.int32)   # tips: points location must be int32
+            points_save_test.append(points)
 
-    for tem in range(len(train_key)):
-        cv2.fillPoly(masks_save_train[tem], [points_save_train[tem]], (255, 255, 255))
-        # save the mask 
-        output_path = os.path.join(output_folder + "train/masks/", train_key[tem]+".png")
-        print("INFO. Output Path :", output_path)
-        cv2.imwrite(output_path, masks_save_train[tem])
-        image_path = os.path.join(input_folder, (train_key[tem] + "." + savesubimgname))
-        open_image = Image.open(image_path)
-        output_path = os.path.join(output_folder + "train/images/", train_key[tem]+".png")
-        open_image.save(output_path, "PNG")
-
-    for tem in range(len(test_key)):
-        cv2.fillPoly(masks_save_test[tem], [points_save_test[tem]], (255, 255, 255))
-        # save the mask 
-        output_path = os.path.join(output_folder + "test/masks/", test_key[tem]+".png")
-        print("INFO. Output Path :", output_path)
-        cv2.imwrite(output_path, masks_save_test[tem])
-        image_path = os.path.join(input_folder, (test_key[tem] + "." + savesubimgname))
-        open_image = Image.open(image_path)
-        output_path = os.path.join(output_folder + "test/images/", test_key[tem]+".png")
-        open_image.save(output_path, "PNG")
-
+        for tem in range(len(data["shapes"])):
+            cv2.fillPoly(masks_save_test[j], [points_save_test[tem]], (255, 255, 255))
+            # save the mask
+            output_path = os.path.join(output_folder + "test/masks/", test_key[j]+".png")
+            print("INFO. Output Path :", output_path)
+            cv2.imwrite(output_path, masks_save_test[j])
+            image_path = os.path.join(input_folder, (test_key[j] + "." + savesubimgname))
+            open_image = Image.open(image_path)
+            output_path = os.path.join(output_folder + "test/images/", test_key[j]+".png")
+            open_image.save(output_path, "PNG")
+        j=j+1
